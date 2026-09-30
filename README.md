@@ -2,7 +2,9 @@
 
 Este é um fork do repositório do sistema PESCD: [lucasmd30/pescd-system](https://github.com/lucasmd30/pescd-system/), originalmente desenvolvido no contexto da disciplina de Desenvolvimento de Software para Web 1 (2026/1 - prof. André T. Endo). 
 
-As contribuições originais de cada participante são listadas em [`CONTRIBUICOES-ORIGINAIS.md`](CONTRIBUICOES-ORIGINAIS.md)
+As contribuições originais de cada participante são listadas em [`CONTRIBUICOES-ORIGINAIS.md`](CONTRIBUICOES-ORIGINAIS.md).
+
+Os requisitos, user stories e regras de negócio estão identificados em [`REQUISITOS.md`](REQUISITOS.md).
 
 ## Executando (infraestrutura)
 
