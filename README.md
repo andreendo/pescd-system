@@ -46,3 +46,22 @@ e `reports`. O acesso é encapsulado em `SeaweedFsStorageService`
 > ALTER TABLE documentations DROP COLUMN file_content;
 > ALTER TABLE reports        DROP COLUMN file_content;
 > ```
+
+## Cobertura de testes
+
+A cobertura é medida com o [JaCoCo](https://www.jacoco.org/jacoco/), configurado
+no `pom.xml`. O relatório é gerado na fase `verify` do Maven (com o PostgreSQL e
+o SeaweedFS de pé, pois o `PescdApplicationTests` sobe o contexto completo):
+
+```bash
+./mvnw verify
+```
+
+O relatório HTML fica em `target/site/jacoco/index.html` e a versão XML, usada
+pelo SonarCloud, em `target/site/jacoco/jacoco.xml`.
+
+Ficam fora da medição as classes sem lógica de negócio:
+
+- `PescdApplication`: apenas inicializa o Spring Boot;
+- `config/**`: configuração do Spring Security, do OpenAPI e a carga de dados de exemplo;
+- `dto/**` e `entity/**`: classes de dados, com getters, setters e construtores gerados pelo Lombok.
