@@ -113,12 +113,7 @@ public class SupervisorProfessorService {
     public void approvePlan(Long offerId, Long studentId, User professor, String parecer) {
 
         OfferStudent os = getEnrollmentForSupervisor(offerId, studentId, professor);
-
-        if (os.getStatus() != StudentOfferStatus.PLANO_ENVIADO) {
-            throw new IllegalArgumentException(
-                    "Ação indisponível: o status atual é \""
-                    + os.getStatus().getDisplayName() + "\".");
-        }
+        requireStatus(os, StudentOfferStatus.PLANO_ENVIADO);
 
         WorkPlan plan = getWorkPlan(os);
         plan.setSupervisorParecer(parecer);
@@ -164,12 +159,7 @@ public class SupervisorProfessorService {
     public void approveReport(Long offerId, Long studentId, User professor, ApproveReportFormDTO form) {
 
         OfferStudent os = getEnrollmentForSupervisor(offerId, studentId, professor);
-
-        if (os.getStatus() != StudentOfferStatus.RELATORIO_ENVIADO) {
-            throw new IllegalArgumentException(
-                    "Ação indisponível: o status atual é \""
-                    + os.getStatus().getDisplayName() + "\".");
-        }
+        requireStatus(os, StudentOfferStatus.RELATORIO_ENVIADO);
 
         Report report = getReport(os);
         report.setSupervisorParecer(form.getParecer());
@@ -194,8 +184,16 @@ public class SupervisorProfessorService {
     }
 
     // -------------------------------------------------------------------------
-    // Utilitário — log de status
+    // Utilitários — pré-condição e log de status
     // -------------------------------------------------------------------------
+
+    private void requireStatus(OfferStudent os, StudentOfferStatus expected) {
+        if (os.getStatus() != expected) {
+            throw new IllegalArgumentException(
+                    "Ação indisponível: o status atual é \""
+                    + os.getStatus().getDisplayName() + "\".");
+        }
+    }
 
     private void changeStatus(OfferStudent os, StudentOfferStatus newStatus, String description) {
         StatusChangeLog log = new StatusChangeLog();
