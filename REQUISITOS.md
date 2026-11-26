@@ -69,6 +69,8 @@ O Sistema tem como objetivo automatizar o *workflow* para a contabilização de 
 | **RN-2** | O gerenciamento envolve operações CRUD.  |
 | **RN-3** | Não é possível remover seu próprio usuário.  |
 | **RN-4** | O e-mail deve ser único por usuário.  |
+| **RN-5** | O administrador pode bloquear e desbloquear usuários. Não é possível bloquear ou desbloquear seu próprio usuário.  |
+| **RN-6** | Um usuário bloqueado não consegue fazer login e recebe a mensagem “Usuário bloqueado. Procure o administrador.”  |
 
 ## 
 

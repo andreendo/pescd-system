@@ -105,6 +105,40 @@ public class AdminUserApiController {
         return userService.updateFromApi(userForm);
     }
 
+    @PostMapping("/{id}/block")
+    @Operation(summary = "Bloquear usuário", description = "Bloqueia um usuário, que deixa de conseguir fazer login. Não é possível bloquear o próprio usuário.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuário bloqueado com sucesso.",
+                    content = @Content(schema = @Schema(implementation = PublicUserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Tentativa de bloquear o próprio usuário.",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado.",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public PublicUserResponse block(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        return userService.updateEnabled(id, false, authentication.getName());
+    }
+
+    @PostMapping("/{id}/unblock")
+    @Operation(summary = "Desbloquear usuário", description = "Desbloqueia um usuário, que volta a conseguir fazer login.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuário desbloqueado com sucesso.",
+                    content = @Content(schema = @Schema(implementation = PublicUserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Tentativa de desbloquear o próprio usuário.",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado.",
+                    content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    public PublicUserResponse unblock(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        return userService.updateEnabled(id, true, authentication.getName());
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Remover usuário", description = "Remove um usuário, exceto o próprio usuário autenticado.")
     @ApiResponses({
