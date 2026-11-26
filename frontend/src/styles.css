@@ -134,9 +134,12 @@ tr:last-child td { border-bottom: none; }
 /* Badges de status coloridos (espelha o sistema Thymeleaf antigo) */
 .badge.st-nao_enviado { background: #f3f4f6; color: #6b7280; }
 .badge.st-plano_enviado { background: #fef9c3; color: #854d0e; }
+.badge.st-plano_reprovado { background: #fee2e2; color: #991b1b; }
 .badge.st-plano_aprovado { background: #dcfce7; color: #166534; }
 .badge.st-documentacao_enviada { background: #fef9c3; color: #854d0e; }
+.badge.st-documentacao_devolvida { background: #ffedd5; color: #9a3412; }
 .badge.st-relatorio_enviado { background: #fef9c3; color: #854d0e; }
+.badge.st-relatorio_reprovado { background: #fee2e2; color: #991b1b; }
 .badge.st-relatorio_aprovado_supervisor { background: #dbeafe; color: #1d4ed8; }
 .badge.st-concluido_responsavel { background: #dcfce7; color: #166534; }
 .badge.user-ativo { background: #dcfce7; color: #166534; }

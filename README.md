@@ -18,6 +18,21 @@ docker compose up -d      # sobe postgres (5432) e seaweedfs (9333/8081/8888)
 ./mvnw spring-boot:run    # sobe a API Spring Boot em http://localhost:8082 (+ Swagger em /swagger-ui.html)
 ```
 
+> **Banco criado antes dos status de reprovação e devolução:** o Hibernate cria
+> restrições `CHECK` com os valores do enum `StudentOfferStatus`, e o
+> `ddl-auto=update` não atualiza essas restrições. Em um banco já existente,
+> salvar os status `PLANO_REPROVADO`, `DOCUMENTACAO_DEVOLVIDA` ou
+> `RELATORIO_REPROVADO` falha até que elas sejam removidas (ou até que o banco
+> seja recriado com `docker compose down -v`):
+>
+> ```sql
+> ALTER TABLE offer_students            DROP CONSTRAINT offer_students_status_check;
+> ALTER TABLE offer_student_status_logs DROP CONSTRAINT offer_student_status_logs_previous_status_check;
+> ALTER TABLE offer_student_status_logs DROP CONSTRAINT offer_student_status_logs_new_status_check;
+> ALTER TABLE status_change_logs        DROP CONSTRAINT status_change_logs_previous_status_check;
+> ALTER TABLE status_change_logs        DROP CONSTRAINT status_change_logs_new_status_check;
+> ```
+
 ### Front-end React
 
 O sistema agora tem um front-end em React (Vite) que consome a REST API,
