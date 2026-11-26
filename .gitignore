@@ -31,4 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-/docs/
+/docs/*
+!/docs/testes-manuais/
+!/docs/sonar/
