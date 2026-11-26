@@ -245,6 +245,13 @@ public class ProfessorResponsavelService {
             );
         }
 
+        if (offer.getStatus() == OfferStatus.AGUARDANDO_ENCERRAMENTO_SECRETARIO
+                || offer.getStatus() == OfferStatus.CONCLUIDA) {
+            throw new IllegalArgumentException(
+                    "O encerramento desta oferta já foi solicitado."
+            );
+        }
+
         List<OfferStudent> students =
                 offerStudentRepository.findByOffer(offer);
 
