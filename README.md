@@ -1,5 +1,7 @@
 # PESCD System
 
+[![CI](https://github.com/gustavobragaia/pescd-system/actions/workflows/ci.yml/badge.svg)](https://github.com/gustavobragaia/pescd-system/actions/workflows/ci.yml)
+
 Este é um fork do repositório do sistema PESCD: [lucasmd30/pescd-system](https://github.com/lucasmd30/pescd-system/), originalmente desenvolvido no contexto da disciplina de Desenvolvimento de Software para Web 1 (2026/1 - prof. André T. Endo). 
 
 As contribuições originais de cada participante são listadas em [`CONTRIBUICOES-ORIGINAIS.md`](CONTRIBUICOES-ORIGINAIS.md).
@@ -65,3 +67,10 @@ Ficam fora da medição as classes sem lógica de negócio:
 - `PescdApplication`: apenas inicializa o Spring Boot;
 - `config/**`: configuração do Spring Security, do OpenAPI e a carga de dados de exemplo;
 - `dto/**` e `entity/**`: classes de dados, com getters, setters e construtores gerados pelo Lombok.
+
+## Integração contínua
+
+O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda no GitHub
+Actions a cada push na `main` e a cada pull request. Ele sobe o PostgreSQL e o
+SeaweedFS com o `docker compose`, executa `./mvnw -B verify` e publica o relatório
+do JaCoCo como artefato (`cobertura-jacoco`) na página da execução.
