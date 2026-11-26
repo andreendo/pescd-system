@@ -20,12 +20,22 @@ async function parse(response) {
   }
 }
 
+function csrfToken() {
+  const match = document.cookie.match(/(?:^|; )XSRF-TOKEN=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 async function request(method, url, { body, isForm } = {}) {
   const options = {
     method,
     credentials: 'include',
     headers: {},
   };
+
+  const token = csrfToken();
+  if (method !== 'GET' && token) {
+    options.headers['X-XSRF-TOKEN'] = token;
+  }
 
   if (body !== undefined) {
     if (isForm) {

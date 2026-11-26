@@ -61,9 +61,7 @@ public class SecurityConfig {
                         .requestMatchers("/professor/responsavel/**").hasRole("PROFESSOR")
                         .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**")
-                )
+                .csrf(csrf -> csrf.spa())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .successHandler(successHandler)
