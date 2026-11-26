@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client.js';
+import { useAuth } from '../../auth/AuthContext.jsx';
 import { ErrorMessage, Loading, SuccessMessage } from '../../components/Feedback.jsx';
 
 const ROLES = [
@@ -13,6 +14,7 @@ const EMPTY = { id: null, fullName: '', email: '', username: '', password: '', r
 
 // AD.01 - CRUD administrativo de usuários.
 export default function UsersPage() {
+  const { user: loggedUser } = useAuth();
   const [users, setUsers] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState('');
@@ -74,6 +76,18 @@ export default function UsersPage() {
     }
   }
 
+  async function toggleEnabled(user) {
+    const action = user.enabled ? 'block' : 'unblock';
+    setError(''); setMessage('');
+    try {
+      await api.post(`/api/admin/users/${user.id}/${action}`);
+      setMessage(user.enabled ? 'Usuário bloqueado.' : 'Usuário desbloqueado.');
+      load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -91,7 +105,7 @@ export default function UsersPage() {
           {!users ? <Loading /> : (
             <table>
               <thead>
-                <tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th></th></tr>
+                <tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Situação</th><th></th></tr>
               </thead>
               <tbody>
                 {users.map((u) => (
@@ -100,7 +114,19 @@ export default function UsersPage() {
                     <td>{u.username}</td>
                     <td>{u.role}</td>
                     <td>
+                      <span className={`badge ${u.enabled ? 'user-ativo' : 'user-bloqueado'}`}>
+                        {u.enabled ? 'Ativo' : 'Bloqueado'}
+                      </span>
+                    </td>
+                    <td>
                       <button className="btn btn-ghost btn-sm" onClick={() => edit(u)}>Editar</button>{' '}
+                      {u.username !== loggedUser?.username && (
+                        <>
+                          <button className="btn btn-ghost btn-sm" onClick={() => toggleEnabled(u)}>
+                            {u.enabled ? 'Bloquear' : 'Desbloquear'}
+                          </button>{' '}
+                        </>
+                      )}
                       <button className="btn btn-danger btn-sm" onClick={() => remove(u)}>Remover</button>
                     </td>
                   </tr>

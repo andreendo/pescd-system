@@ -140,12 +140,23 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
+    public PublicUserResponse updateEnabled(Long id, boolean enabled, String loggedUsername) {
+        User user = findById(id);
+
+        if (user.getUsername().equals(loggedUsername)) {
+            throw new IllegalArgumentException("Você não pode bloquear ou desbloquear seu próprio usuário.");
+        }
+
+        user.setEnabled(enabled);
+        return toPublicResponse(userRepository.save(user));
+    }
+
     private void applyForm(User user, UserForm form, boolean creating) {
         user.setFullName(form.getFullName());
         user.setEmail(form.getEmail());
         user.setUsername(form.getUsername());
         user.setRole(form.getRole());
-        user.setEnabled(true);
 
         if (creating || (form.getPassword() != null && !form.getPassword().isBlank())) {
             user.setPassword(passwordEncoder.encode(form.getPassword()));

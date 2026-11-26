@@ -1,5 +1,7 @@
 # PESCD System
 
+[![CI](https://github.com/gustavobragaia/pescd-system/actions/workflows/ci.yml/badge.svg)](https://github.com/gustavobragaia/pescd-system/actions/workflows/ci.yml)
+
 Este é um fork do repositório do sistema PESCD: [lucasmd30/pescd-system](https://github.com/lucasmd30/pescd-system/), originalmente desenvolvido no contexto da disciplina de Desenvolvimento de Software para Web 1 (2026/1 - prof. André T. Endo). 
 
 As contribuições originais de cada participante são listadas em [`CONTRIBUICOES-ORIGINAIS.md`](CONTRIBUICOES-ORIGINAIS.md).
@@ -15,6 +17,21 @@ Ambos sobem via Docker Compose:
 docker compose up -d      # sobe postgres (5432) e seaweedfs (9333/8081/8888)
 ./mvnw spring-boot:run    # sobe a API Spring Boot em http://localhost:8082 (+ Swagger em /swagger-ui.html)
 ```
+
+> **Banco criado antes dos status de reprovação e devolução:** o Hibernate cria
+> restrições `CHECK` com os valores do enum `StudentOfferStatus`, e o
+> `ddl-auto=update` não atualiza essas restrições. Em um banco já existente,
+> salvar os status `PLANO_REPROVADO`, `DOCUMENTACAO_DEVOLVIDA` ou
+> `RELATORIO_REPROVADO` falha até que elas sejam removidas (ou até que o banco
+> seja recriado com `docker compose down -v`):
+>
+> ```sql
+> ALTER TABLE offer_students            DROP CONSTRAINT offer_students_status_check;
+> ALTER TABLE offer_student_status_logs DROP CONSTRAINT offer_student_status_logs_previous_status_check;
+> ALTER TABLE offer_student_status_logs DROP CONSTRAINT offer_student_status_logs_new_status_check;
+> ALTER TABLE status_change_logs        DROP CONSTRAINT status_change_logs_previous_status_check;
+> ALTER TABLE status_change_logs        DROP CONSTRAINT status_change_logs_new_status_check;
+> ```
 
 ### Front-end React
 
@@ -46,3 +63,29 @@ e `reports`. O acesso é encapsulado em `SeaweedFsStorageService`
 > ALTER TABLE documentations DROP COLUMN file_content;
 > ALTER TABLE reports        DROP COLUMN file_content;
 > ```
+
+## Cobertura de testes
+
+A cobertura é medida com o [JaCoCo](https://www.jacoco.org/jacoco/), configurado
+no `pom.xml`. O relatório é gerado na fase `verify` do Maven (com o PostgreSQL e
+o SeaweedFS de pé, pois o `PescdApplicationTests` sobe o contexto completo):
+
+```bash
+./mvnw verify
+```
+
+O relatório HTML fica em `target/site/jacoco/index.html` e a versão XML, usada
+pelo SonarCloud, em `target/site/jacoco/jacoco.xml`.
+
+Ficam fora da medição as classes sem lógica de negócio:
+
+- `PescdApplication`: apenas inicializa o Spring Boot;
+- `config/**`: configuração do Spring Security, do OpenAPI e a carga de dados de exemplo;
+- `dto/**` e `entity/**`: classes de dados, com getters, setters e construtores gerados pelo Lombok.
+
+## Integração contínua
+
+O workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) roda no GitHub
+Actions a cada push na `main` e a cada pull request. Ele sobe o PostgreSQL e o
+SeaweedFS com o `docker compose`, executa `./mvnw -B verify` e publica o relatório
+do JaCoCo como artefato (`cobertura-jacoco`) na página da execução.
