@@ -62,6 +62,11 @@ clonado, à minha conta do GitHub e a um navegador, nas seguintes frentes:
   a LLM propunha o código e os testes, e eu revisava cada diff, pedia ajustes e
   só então aprovava o commit. Todos os testes foram rodados localmente e no CI
   antes de cada PR.
+- **Medição da cobertura.** A cobertura foi medida com o JaCoCo 0.8.16, que
+  configurei no `pom.xml` (K): ele instrumenta o código enquanto os testes
+  rodam e, na fase `verify` (`./mvnw verify`), gera o relatório em
+  `target/site/jacoco/`. O CI publica o mesmo relatório como artefato
+  (`cobertura-jacoco`).
 - **Evidências e documentação.** Me apoiei na LLM para gerar as evidências:
   os testes manuais de PS.* (`docs/testes-manuais/ps.md`) foram executados com
   o agente operando o navegador, a partir dos casos definidos, e tirando os
