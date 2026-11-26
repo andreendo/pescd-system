@@ -21,6 +21,8 @@ Sessão executada em 26/11/2026 por Lucas Martinez Domingues.
 
 ## Casos
 
+Cada caso tem um print. A seção [Evidências](#evidências), no fim, mostra todos eles com o que observar em cada um.
+
 | ID | Story / regra | Critério | Entrada | Resultado esperado | Resultado obtido | Situação | Evidência |
 |---|---|---|---|---|---|---|---|
 | CT-01 | PS.01 RN-1, RN-2, RN-3 | Classe válida | Login como `alevada` | Lista a oferta com o aluno, o status e o botão de ação | "Algoritmo e Estrutura de Dados I" com João Lima, "Plano enviado" e o botão "Aprovar plano" | Passou | [ps01-ct01](evidencias/ps01-ct01-painel-supervisor.jpg) |
@@ -54,3 +56,94 @@ Sessão executada em 26/11/2026 por Lucas Martinez Domingues.
 - A validação de faixa da frequência (CT-12 e CT-13) é feita pelo navegador (`min` e `max` do campo). O backend também valida (`@Min(0)` e `@Max(100)` no `ApproveReportFormDTO`).
 - O plano de trabalho da Beatriz Costa, em "Desenvolvimento Web I", mostra a disciplina "Algoritmo e Estrutura de Dados I". Isso vem dos dados de exemplo do `DataInitializer`, que usa a mesma disciplina para todos os planos, e não do sistema.
 - No CT-17, o acesso é negado, mas sem nenhuma mensagem: o aluno só é levado para a página inicial.
+
+## Evidências
+
+Os prints de cada caso, na ordem da tabela. O usuário logado aparece no canto superior direito de cada tela.
+
+| Usuário | Papel nos testes |
+|---|---|
+| `alevada` | supervisor do aluno João Lima (plano enviado) |
+| `aendo` | supervisor da aluna Beatriz Costa (relatório enviado, frequência informada de 85%) |
+| `mnaldi` | professor sem alunos supervisionados |
+| `lferreira` | aluno |
+
+### PS.01
+
+**CT-01 — painel do supervisor** (`alevada`). A oferta aparece com o aluno João Lima, o status "Plano enviado" e o botão "Aprovar plano".
+
+![CT-01](evidencias/ps01-ct01-painel-supervisor.jpg)
+
+**CT-02 — professor sem alunos supervisionados** (`mnaldi`). A tela mostra "Nenhuma oferta associada a você.", sem erro.
+
+![CT-02](evidencias/ps01-ct02-sem-supervisionados.jpg)
+
+### PS.02
+
+**CT-03 — tela de aprovação do plano.** O nome do aluno aparece no topo e os dados do plano vêm como texto, sem campos editáveis. Abaixo, o formulário com o parecer.
+
+![CT-03](evidencias/ps02-ct03-dados-do-plano.jpg)
+
+**CT-04 — parecer vazio.** O navegador bloqueia o envio com "Preencha este campo.".
+
+![CT-04](evidencias/ps02-ct04-parecer-vazio.jpg)
+
+**CT-05 — parecer só com espaços (falhou, #30).** A aprovação é recusada (o status continua "Plano enviado"), mas a mensagem no topo é "Validation failed.", em inglês e sem indicar o campo.
+
+![CT-05](evidencias/ps02-ct05-parecer-so-espacos.jpg)
+
+**CT-06 — botão Cancelar (falhou, #29).** O formulário do CT-03 só tem o botão "Aprovar plano". O print mostra o painel depois de usar o "Voltar" do topo da página: o status continua "Plano enviado", sem alteração.
+
+![CT-06](evidencias/ps02-ct06-voltar-sem-aprovar.jpg)
+
+**CT-07 — aprovar com parecer.** Aparece "Plano de trabalho aprovado.", o status muda para "Plano aprovado", o formulário some e o histórico registra a mudança com data e hora.
+
+![CT-07](evidencias/ps02-ct07-plano-aprovado.jpg)
+
+**CT-08 — painel depois da aprovação.** O status é "Plano aprovado" e a ação virou "Ver detalhes": o botão "Aprovar plano" não aparece mais.
+
+![CT-08](evidencias/ps02-ct08-painel-apos-aprovacao.jpg)
+
+### PS.03
+
+**CT-09 — painel e tela do relatório** (`aendo`). No painel, a Beatriz Costa aparece com "Relatório enviado" e o botão "Aprovar relatório". Na tela, os blocos do plano e do relatório, com a frequência indicada pela aluna (85%).
+
+![CT-09a](evidencias/ps03-ct09a-painel-relatorio-enviado.jpg)
+
+![CT-09b](evidencias/ps03-ct09b-dados-do-relatorio.jpg)
+
+**CT-10 — frequência não preenchida (falhou, #28).** A aluna informou 85%, mas o campo "Frequência confirmada (%)" do formulário vem vazio.
+
+![CT-10](evidencias/ps03-ct10-frequencia-nao-preenchida.jpg)
+
+**CT-11 — sem sugestão de nota.** Com o parecer e a frequência preenchidos e a nota em "— Selecione —", o navegador bloqueia com "Selecione um item da lista.".
+
+![CT-11](evidencias/ps03-ct11-nota-vazia.jpg)
+
+**CT-12 — frequência -1.** Bloqueada com "O valor deve ser maior ou igual a 0.".
+
+![CT-12](evidencias/ps03-ct12-frequencia-menos-1.jpg)
+
+**CT-13 — frequência 101.** Bloqueada com "O valor deve ser menor ou igual a 100.".
+
+![CT-13](evidencias/ps03-ct13-frequencia-101.jpg)
+
+**CT-14 — frequência 100.** O relatório é aprovado: "Relatório aprovado.", o status "Relatório aprovado pelo supervisor" e o registro no histórico.
+
+![CT-14](evidencias/ps03-ct14-frequencia-100-aprovado.jpg)
+
+**CT-15 — frequência 0.** Formulário preenchido com frequência 0 e nota E (primeiro print) e a aprovação aceita (segundo print). Antes deste caso, a API foi reiniciada para a inscrição voltar a "Relatório enviado".
+
+![CT-15a](evidencias/ps03-ct15a-frequencia-0-preenchido.jpg)
+
+![CT-15b](evidencias/ps03-ct15b-frequencia-0-aprovado.jpg)
+
+### Controle de acesso
+
+**CT-16 — professor abrindo a aluna de outro supervisor.** `alevada` digitou a URL da Beatriz (`/professor/supervisor/ofertas/4/alunos/10`). A tela só mostra "Você não é o supervisor deste aluno nesta oferta.", sem nenhum dado da aluna.
+
+![CT-16](evidencias/acesso-ct16-outro-professor.jpg)
+
+**CT-17 — aluno abrindo a tela do supervisor.** Logada como `lferreira` ("Lucas Ferreira · ALUNO"), a aluna digitou a URL da tela do supervisor e foi levada para a página inicial, sem ver os dados.
+
+![CT-17](evidencias/acesso-ct17-aluno-na-tela-do-supervisor.jpg)
